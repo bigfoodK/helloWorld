@@ -1,0 +1,23 @@
+{
+  "name": "helloworld",
+  "version": "1.0.0",
+  "description": "자바스크립트로 뭔가... 뭔가 보여드리겠습니다!",
+  "main": "source/index.js",
+  "scripts": {
+    "start": "node source/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bigfoodK/helloWorld.git"
+  },
+  "author": "bigfood",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bigfoodK/helloWorld/issues"
+  },
+  "homepage": "https://github.com/bigfoodK/helloWorld#readme",
+  "dependencies": {
+    "discord.js": "^11.4.2"
+  }
+}
