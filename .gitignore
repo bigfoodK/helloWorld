@@ -61,4 +61,7 @@ typings/
 .next
 
 # app settings
-source/settings.json
+config.json
+
+# compiled js files
+distribute/
