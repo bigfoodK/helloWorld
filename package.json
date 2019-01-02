@@ -4,7 +4,7 @@
   "description": "자바스크립트로 뭔가... 뭔가 보여드리겠습니다!",
   "main": "source/index.js",
   "scripts": {
-    "start": "node source/index.js",
+    "start": "node distribute/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
