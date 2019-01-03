@@ -19,7 +19,20 @@ export default class Bot {
 
       console.log(`${message.author.username}/${message.author.id}: ${message.content}`);
       const args: Array<string> = message.content.split(' ');
-      this.commands.run(args[0])(message, args);
+      if(args[0].startsWith(config.prefix)) {
+        args[0] = args[0].slice(config.prefix.length);
+      }
+      else if(config.ignoreNoPrefix) return;
+
+      const commandName = args[0];
+      args.shift();
+
+      try {
+        this.commands.run(commandName)(message, ...args);
+      }
+      catch (e) {
+        console.error(e);
+      }
     });
   }
 

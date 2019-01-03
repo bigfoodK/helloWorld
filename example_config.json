@@ -1,3 +1,5 @@
 {
-  "token": "토큰토큰토큰토큰토큰토큰토큰토큰토큰토큰"
+  "token": "tokentokentokentokentokentokentokentoken",
+  "prefix": "!",
+  "ignoreNoPrefix": true
 }
