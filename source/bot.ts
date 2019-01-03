@@ -39,4 +39,8 @@ export default class Bot {
   start() {
     this.client.login(config.token);
   }
+
+  exit() {
+    this.client.destroy();
+  }
 }
