@@ -43,6 +43,7 @@ export default class commands {
   async 제비뽑기(message: Message, timeRaw: string = "5") {
     const channel: Channels = message.channel;
     const time: number = +timeRaw;
+
     if(time === NaN) {
       const errorMessage: string = `${timeRaw} is not number`;
       channel.send(errorMessage);
@@ -60,7 +61,7 @@ export default class commands {
     }
 
     const reactionName: string = '✋';
-    const userList: Array<User> = [];
+    const userList: Array<string> = [];
     const filter = (reaction: MessageReaction, user: User) => {
       return reaction.emoji.name === reactionName && !user.bot;
     }
@@ -71,17 +72,18 @@ export default class commands {
     }
     board.react(reactionName);
     const collector = board.createReactionCollector(filter, {time: time * 1000});
-    collector.on('collect', (reaction) => {
-    });
 
     collector.on('end', (collected: Map<string, MessageReaction>) => {
-      // 물어볼것: collected['✋']같은 형태로 할 수 없는지 
-      collected.forEach((message: MessageReaction) => {
-        if(message.emoji.name != reactionName) return;
-        message.users.forEach((user) => {
-          if(user.bot) return;
-          userList.push(user);
-        });
+      const messageReaction = collected.get(reactionName);
+
+      if(!messageReaction) {
+        console.error(`MessageReaction named ${reactionName} is not exit`);
+        return;
+      }
+      
+      messageReaction.users.forEach((user) => {
+        if(user.bot) return;
+        userList.push(user.username);
       });
 
       if(!userList.length) {
@@ -89,28 +91,17 @@ export default class commands {
         return;
       }
 
-      function randomUserPickTemplate(userList: Array<User>) {
-        const pick = userList[Math.floor(Math.random() * userList.length)].username;
-        const templates: Array<Array<string>> = [
-          ['용의자 목록\n', `\n범인은 ${pick}`],
-          ['☆정신병원 환자 목록☆\n', `\n이 중에서 수석환자는 ${pick}`],
-          ['범죄자 목록\n', `\n해명해야 할 사람은 ${pick}`],
-          ['꼬추s\n', `\n특히 ${pick} 얘는 나노꼬추`],
-          ['치킨 먹은 사람들\n', `\n계산은 ${pick} 카드로`],
-          ['우르닐 파티\n', `\n바드 할 사람은 ${pick}`],
-        ];
-        const template: Array<string> = templates[
-          Math.floor(Math.random() * templates.length)
-        ];
-        let result = '';
-        result += template[0];
-        userList.forEach((user) => {
-          result += user.username + '\n';
-        });
-        result += template[1];
-        return result;
-      }
-      channel.send(randomUserPickTemplate(userList));
+      const pick = userList[Math.floor(Math.random() * userList.length)];
+      const templates: Array<string> = [
+        `용의자 목록\n${userList.join('\n')}\n\n범인은 ${pick}`,
+        `☆정신병원 환자 목록☆\n${userList.join('\n')}\n\n이 중에서 수석환자는 ${pick}`,
+        `범죄자 목록\n${userList.join('\n')}\n\n해명해야 할 사람은 ${pick}`,
+        `꼬추s\n${userList.join('\n')}\n\n특히 ${pick} 얘는 나노꼬추`,
+        `치킨 먹은 사람들\n${userList.join('\n')}\n\n계산은 ${pick} 카드로`,
+        `우르닐 파티\n${userList.join('\n')}\n\n바드 할 사람은 ${pick}`,
+      ];
+
+      channel.send(templates[Math.floor(Math.random() * templates.length)]);
     });
   }
 }
