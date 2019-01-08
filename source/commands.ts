@@ -11,6 +11,7 @@ export default class commands {
       "test": this.test,
       "섹": this.섹,
       "제비뽑기": this.제비뽑기,
+      "광고체": this.광고체,
     };
   }
 
@@ -103,6 +104,67 @@ export default class commands {
 
       channel.send(templates[Math.floor(Math.random() * templates.length)]);
     });
+  }
+
+  광고체(message: Message, ...words: string[]) {
+    const channel: Channels = message.channel;
+    const result: string[] = [];
+    console.log(words);
+    // const words = message.content.split(' ');
+    if(!words) throw new Error('there is no input');
+    
+    words.forEach((word) => {
+      const preset = [
+        `☆${word}`,
+        `★${word}`,
+        `▷${word}`,
+        `☎${word}`,
+        `100%합법◇${word}`,
+        `◇${word}`,
+        `◆${word}`,
+        `.${word}`,
+        `*${word}`,
+        `@@@${word}`,
+        `$$${word}`,
+        `♚${word}`,
+        `￥${word}`,
+        `♜${word}`,
+        `→${word}`,
+        `☞${word}`,
+        `♡${word}`,
+        `♬${word}`,
+        `♜${word}`,
+    
+        `♜${word}♜`,
+        `￥${word}￥`,
+        `◇${word}◇`,
+        `☆${word}☆`,
+        `★${word}★`,
+        `◐${word}◑`,
+        `☞${word}☜`,
+        `→${word}←`,
+        `♬${word}♬`,
+        `♨${word}♨`,
+        `▲${word}▲`,
+        `♠${word}♠`,
+        `▷${word}◁`,
+        `▶${word}◀`,
+        `♥${word}♥`,
+        `§${word}§`,
+    
+        `♚♚${word}♚♚`,
+        `§§${word}§§`,
+        `♣♣${word}♣♣`,
+        `★★${word}★★`,
+        `☆★${word}★☆`,
+        `☆☆${word}☆☆`,
+        `※※${word}※※`,
+      ];
+    
+      result.push(preset[Math.floor(Math.random() * preset.length)]);
+    });
+  
+    channel.send(result.join(''));
   }
 }
 
