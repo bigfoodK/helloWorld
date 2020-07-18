@@ -5,6 +5,8 @@ import { ServerConfig } from './types';
 export default class PingCommand extends CommandBase {
   readonly name = 'ping';
 
+  readonly aliases = [];
+
   readonly description = 'Just response "pong"';
 
   public getHelp() {
