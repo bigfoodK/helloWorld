@@ -1,0 +1,55 @@
+import CommandBase from './CommandBase';
+import { Message, RichEmbed } from 'discord.js';
+import config from '../config';
+import PingCommand from './PingCommand';
+
+class CommandManager {
+  constructor(commands: CommandBase[]) {
+    commands.forEach(command => this.commands.set(command.name, command));
+  }
+
+  private commands: Map<string, CommandBase> = new Map();
+
+  private help(message: Message, args: string[]) {
+    const commandName = args.shift();
+    const command = this.commands.get(commandName || '');
+
+    if (command) {
+      return message.channel.sendEmbed(command.getHelp(args));
+    }
+
+    const embed = new RichEmbed();
+    embed.setTitle('Commands');
+
+    this.commands.forEach((commandEntry, commandNameEntry) => {
+      embed.addField(commandNameEntry, commandEntry.description, true);
+    })
+
+    message.channel.sendEmbed(embed);
+  }
+
+  public run(message: Message) {
+    const args = message.content.slice(config.prefix.length).split(/\s+/);
+
+    const commandName = args.shift();
+    console.log(args, commandName);
+
+    if (!commandName) {
+      return;
+    }
+
+    if (commandName === 'help') {
+      this.help(message, args);
+      return;
+    }
+
+    const command = this.commands.get(commandName);
+    command?.handler(message, args);
+  }
+}
+
+const commandManager = new CommandManager([
+  new PingCommand(),
+]);
+
+export default commandManager;
