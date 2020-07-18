@@ -1,5 +1,6 @@
 import CommandBase from './CommandBase';
 import { RichEmbed, Message } from 'discord.js';
+import { ServerConfig } from './types';
 
 export default class PingCommand extends CommandBase {
   readonly name = 'ping';
@@ -12,7 +13,7 @@ export default class PingCommand extends CommandBase {
       .addField('Description', 'Just response "pong"')
   }
 
-  public async handler(message: Message, args: string[]) {
+  public async handler(message: Message, serverConfig:ServerConfig, args: string[]) {
     const embed = new RichEmbed()
       .setTitle('Pong')
       .setFooter(`${(new Date).toLocaleTimeString()}`);
