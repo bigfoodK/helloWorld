@@ -65,3 +65,7 @@ config.json
 
 # compiled js files
 distribute/
+
+# default storage
+storage
+leveldb
