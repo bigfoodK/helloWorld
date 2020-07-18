@@ -1,6 +1,7 @@
 import { Client, Message } from 'discord.js';
 import config from './config';
 import commandManager from './command';
+import { getConfig } from './command/utils';
 
 export default class Bot {
   constructor() {
@@ -15,14 +16,17 @@ export default class Bot {
 
   private client: Client = new Client();
 
-  private handleMessage(message: Message) {
-    if (message.author.bot || !message.content.startsWith(config.prefix)) {
+  private async handleMessage(message: Message) {
+    const serverConfig =  await getConfig(message.guild.id);
+    const { prefix } = serverConfig;
+
+    if (message.author.bot || !message.content.startsWith(prefix)) {
       return;
     }
 
     console.log(`${message.author.username}/${message.author.id}: ${message.content}`);
 
-    commandManager.run(message);
+    commandManager.run(message, serverConfig);
   }
 
   public start() {
