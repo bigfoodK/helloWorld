@@ -1,5 +1,5 @@
 import CommandBase from './CommandBase';
-import { RichEmbed, Message } from 'discord.js';
+import { Message, MessageEmbed } from 'discord.js';
 import database from '../database';
 import config from '../config';
 import { ServerConfig } from './types';
@@ -16,7 +16,7 @@ export default class ConfigCommand extends CommandBase {
 
     switch (optionName) {
       case 'prefix': {
-        return new RichEmbed()
+        return new MessageEmbed()
           .setTitle('Prefix')
           .addField('Description', `Prefix of command. (default: ${config.prefix})`)
           .addField('Usage', 'config prefix prefix')
@@ -24,7 +24,7 @@ export default class ConfigCommand extends CommandBase {
       }
 
       default: {
-        return new RichEmbed()
+        return new MessageEmbed()
           .setTitle('Server options')
           .addField('prefix', 'Prefix of command. (default: $)')
       }
@@ -32,6 +32,10 @@ export default class ConfigCommand extends CommandBase {
   }
 
   public async handler(message: Message, serverConfig: ServerConfig, args: string[]) {
+    if (!message.guild) {
+      return;
+    }
+
     const optionName = args.shift();
 
     switch(optionName) {

@@ -1,8 +1,9 @@
 import CommandBase from './CommandBase';
-import { Message, RichEmbed } from 'discord.js';
+import { Message, MessageEmbed } from 'discord.js';
 import PingCommand from './PingCommand';
 import ConfigCommand from './ConfigCommand';
 import { ServerConfig } from './types';
+import MusicCommand from './MusicCommand';
 
 class CommandManager {
   constructor(commands: CommandBase[]) {
@@ -14,25 +15,25 @@ class CommandManager {
 
   private commands: Map<string, CommandBase> = new Map();
 
-  private help(message: Message, args: string[]) {
+  private async help(message: Message, args: string[]) {
     const commandName = args.shift();
     const command = this.commands.get(commandName || '');
 
     if (command) {
-      return message.channel.sendEmbed(command.getHelp(args));
+      return await message.channel.send(command.getHelp(args));
     }
 
-    const embed = new RichEmbed();
+    const embed = new MessageEmbed();
     embed.setTitle('Commands');
 
     this.commands.forEach((commandEntry, commandNameEntry) => {
       embed.addField(commandNameEntry, commandEntry.description, true);
     })
 
-    message.channel.sendEmbed(embed);
+    await message.channel.send(embed);
   }
 
-  public run(message: Message, serverConfig: ServerConfig) {
+  public async run(message: Message, serverConfig: ServerConfig) {
     const args = message.content.slice(serverConfig.prefix.length).split(/\s+/);
 
     const commandName = args.shift();
@@ -42,18 +43,21 @@ class CommandManager {
     }
 
     if (commandName === 'help') {
-      this.help(message, args);
+      await this.help(message, args);
+      await message.delete();
       return;
     }
 
     const command = this.commands.get(commandName);
-    command?.handler(message, serverConfig, args);
+    await command?.handler(message, serverConfig, args);
+    await message.delete();
   }
 }
 
 const commandManager = new CommandManager([
   new PingCommand(),
   new ConfigCommand(),
+  new MusicCommand(),
 ]);
 
 export default commandManager;
