@@ -1,11 +1,9 @@
 import { EventEmitter } from 'events';
-import { MusicInfo } from './types';
+import { MusicInfo, MusicQueueRepeat } from './types';
 import { pathExists } from 'fs-extra';
 import { join } from 'path';
 import config from '../../config';
 import musicDownloader from './MusicDownloader';
-
-type MusicQueueRepeat = 'none' | 'one' | 'all';
 
 export interface MusicQueue {
   on(event: 'playableChange', listener: (playable: boolean) => void): this;
