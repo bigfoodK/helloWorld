@@ -1,4 +1,4 @@
-import { Message, MessageEmbed } from 'discord.js';
+import { Message, RichEmbed } from 'discord.js';
 import { ServerConfig } from './types';
 
 export default abstract class CommandBase {
@@ -10,5 +10,5 @@ export default abstract class CommandBase {
 
   abstract async handler(message: Message, serverConfig: ServerConfig, args: string[]): Promise<void>;
 
-  abstract getHelp(args: string[]): MessageEmbed;
+  abstract getHelp(args: string[]): RichEmbed;
 }

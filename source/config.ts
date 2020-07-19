@@ -13,7 +13,6 @@ function getEnv(key: string, require?: boolean) {
 
 export default {
   musicStorageDirectoryPath: getEnv('MUSIC_STORAGE_DIRECTORY_PATH') || path.join(__dirname, '../../storage'),
-  musicDownloadServerHost: getEnv('MUSIC_DOWNLOAD_SERVER_HOST') || 'ws://localhost:5003',
   leveldbPath: getEnv('LEVELDB_PATH') || '../../leveldb',
   tokken: getEnv('TOKKEN', true),
   prefix: getEnv('PREFIX') || '!',

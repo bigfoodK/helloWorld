@@ -17,9 +17,6 @@ export default class Bot {
   private client: Client = new Client();
 
   private async handleMessage(message: Message) {
-    if (!message.guild) {
-      return;
-    }
     const serverConfig =  await getConfig(message.guild.id);
     const { prefix } = serverConfig;
 
@@ -29,7 +26,7 @@ export default class Bot {
 
     console.log(`${message.author.username}/${message.author.id}: ${message.content}`);
 
-    await commandManager.run(message, serverConfig);
+    commandManager.run(message, serverConfig);
   }
 
   public start() {

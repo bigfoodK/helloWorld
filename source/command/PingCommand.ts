@@ -1,5 +1,5 @@
 import CommandBase from './CommandBase';
-import { Message, MessageEmbed } from 'discord.js';
+import { RichEmbed, Message } from 'discord.js';
 import { ServerConfig } from './types';
 
 export default class PingCommand extends CommandBase {
@@ -10,13 +10,13 @@ export default class PingCommand extends CommandBase {
   readonly description = 'Just response "pong"';
 
   public getHelp() {
-    return new MessageEmbed()
+    return new RichEmbed()
       .setTitle('Pong')
       .addField('Description', 'Just response "pong"')
   }
 
   public async handler(message: Message, serverConfig:ServerConfig, args: string[]) {
-    const embed = new MessageEmbed()
+    const embed = new RichEmbed()
       .setTitle('Pong')
       .setFooter(`${(new Date).toLocaleTimeString()}`);
 
@@ -24,7 +24,7 @@ export default class PingCommand extends CommandBase {
       embed.addField(index, arg);
     })
 
-    await message.channel.send(embed);
+    await message.channel.sendEmbed(embed);
     return;
   }
 }
