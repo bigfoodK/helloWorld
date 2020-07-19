@@ -137,6 +137,14 @@ export default class MusicCommand extends CommandBase {
           .addField('Usage', '"music leave"')
       }
 
+      case 'repeat': {
+        return new MessageEmbed()
+          .setTitle('Repeat')
+          .addField('Description', `Set repeat option`)
+          .addField('Usage', '"music repeat (all | one | none)"')
+          .addField('Alias', '"m r"')
+      }
+
       default: {
         return new MessageEmbed()
           .setTitle('Music')
@@ -147,6 +155,7 @@ export default class MusicCommand extends CommandBase {
           .addField('Stop Command', '"help music stop"')
           .addField('Skip Command', '"help music skip"')
           .addField('Leave Command', '"help music leave"')
+          .addField('Repeat Command', '"help music repeat"')
       }
     }
   }
@@ -193,6 +202,36 @@ export default class MusicCommand extends CommandBase {
 
       case 'leave': {
         musicPlayer.leave();
+      } break;
+
+      case 'r':
+      case 'repeat': {
+        const repeat = args.shift();
+        switch(repeat) {
+          case 'one': {
+            musicPlayer.setRepeat('one');
+            await message.channel.send(new MessageEmbed()
+              .setColor('#2196f3')
+              .setTitle(`Repeat only on music`)
+            )
+          } break;
+
+          case 'all': {
+            musicPlayer.setRepeat('all');
+            await message.channel.send(new MessageEmbed()
+              .setColor('#2196f3')
+              .setTitle(`Repeat whole queue`)
+            )
+          } break;
+
+          default: {
+            musicPlayer.setRepeat('none');
+            await message.channel.send(new MessageEmbed()
+              .setColor('#2196f3')
+              .setTitle(`No repeat`)
+            )
+          }
+        }
       } break;
 
       default: {

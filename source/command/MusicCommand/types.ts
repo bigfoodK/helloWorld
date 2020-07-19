@@ -1,5 +1,3 @@
-import { User } from "discord.js";
-
 export type MusicInfo = {
   title: string,
   url: string,
@@ -8,3 +6,5 @@ export type MusicInfo = {
   adderId: string,
   addedTime: number,
 }
+
+export type MusicQueueRepeat = 'none' | 'one' | 'all';

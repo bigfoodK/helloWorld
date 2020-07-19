@@ -1,5 +1,5 @@
 import { MusicQueue } from './MusicQueue';
-import { MusicInfo } from './types';
+import { MusicInfo, MusicQueueRepeat } from './types';
 import { VoiceConnection, VoiceChannel, StreamDispatcher } from 'discord.js';
 import { join } from 'path';
 import config from '../../config';
@@ -114,5 +114,9 @@ export default class MusicPlayer {
 
   public leave() {
     this.leaveChannel();
+  }
+
+  public setRepeat(repeat: MusicQueueRepeat) {
+    this.queue.setRepeat(repeat);
   }
 }
