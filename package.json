@@ -2,12 +2,9 @@
   "name": "helloworld",
   "version": "1.0.0",
   "description": "자바스크립트로 뭔가... 뭔가 보여드리겠습니다!",
-  "main": "distribute/app.js",
+  "main": "source/index.js",
   "scripts": {
-    "start": "node .",
-    "start-watch": "nodemon .",
-    "build": "tsc",
-    "build-watch": "tsc -w",
+    "start": "node distribute/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -21,14 +18,9 @@
   },
   "homepage": "https://github.com/bigfoodK/helloWorld#readme",
   "dependencies": {
-    "@discordjs/opus": "^0.3.2",
-    "@types/fs-extra": "^9.0.1",
-    "@types/node": "^14.0.23",
-    "discord.js": "^11.6.4",
-    "dotenv": "^8.2.0",
-    "fs-extra": "^9.0.1",
-    "level-ts": "^1.13.1",
-    "nodemon": "^2.0.4",
-    "typescript": "^3.9.7"
+    "@types/node": "^10.12.18",
+    "discord.js": "^11.4.2",
+    "tslint": "^5.12.0",
+    "typescript": "^3.2.2"
   }
 }
