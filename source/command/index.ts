@@ -1,8 +1,7 @@
 import CommandBase from './CommandBase';
 import { Message, RichEmbed } from 'discord.js';
+import config from '../config';
 import PingCommand from './PingCommand';
-import ConfigCommand from './ConfigCommand';
-import { ServerConfig } from './types';
 
 class CommandManager {
   constructor(commands: CommandBase[]) {
@@ -29,10 +28,11 @@ class CommandManager {
     message.channel.sendEmbed(embed);
   }
 
-  public run(message: Message, serverConfig: ServerConfig) {
-    const args = message.content.slice(serverConfig.prefix.length).split(/\s+/);
+  public run(message: Message) {
+    const args = message.content.slice(config.prefix.length).split(/\s+/);
 
     const commandName = args.shift();
+    console.log(args, commandName);
 
     if (!commandName) {
       return;
@@ -44,13 +44,12 @@ class CommandManager {
     }
 
     const command = this.commands.get(commandName);
-    command?.handler(message, serverConfig, args);
+    command?.handler(message, args);
   }
 }
 
 const commandManager = new CommandManager([
   new PingCommand(),
-  new ConfigCommand(),
 ]);
 
 export default commandManager;
