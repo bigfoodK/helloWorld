@@ -7,8 +7,6 @@ import { ServerConfig } from './types';
 export default class ConfigCommand extends CommandBase {
   readonly name = 'config';
 
-  readonly aliases = [];
-
   readonly description = 'Config options for this server';
 
   public getHelp(args: string[]) {

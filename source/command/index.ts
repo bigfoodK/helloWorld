@@ -6,10 +6,7 @@ import { ServerConfig } from './types';
 
 class CommandManager {
   constructor(commands: CommandBase[]) {
-    commands.forEach(command => {
-      this.commands.set(command.name, command);
-      command.aliases.forEach(alias => this.commands.set(alias, command));
-    });
+    commands.forEach(command => this.commands.set(command.name, command));
   }
 
   private commands: Map<string, CommandBase> = new Map();
