@@ -17,23 +17,7 @@ export default class MusicCommand extends CommandBase {
   private musicPlayerManager: MusicPlayerManager = new MusicPlayerManager();
 
   private async play(message: Message, musicPlayer: MusicPlayer) {
-    return musicPlayer.play(message.member?.voice.channel || undefined)
-      .catch(async (error: Error) => {
-        if (error.message === 'QUEUE_IS_EMPTY') {
-          await message.channel.send(new MessageEmbed()
-            .setColor('#ef5350')
-            .setTitle('Queue is empty')
-            .setDescription('Add some music')
-          )
-        } else if (error.message === 'NO_CHANNEL_FOUND') {
-          await message.channel.send(new MessageEmbed()
-            .setColor('#ef5350')
-            .setTitle('No channel found')
-            .setDescription('Join to voice channel')
-          )
-        }
-        return false;
-      })
+    return musicPlayer.play(message);
   }
 
   private async addMusics(message: Message, musicPlayer: MusicPlayer, urls: string[]) {
@@ -167,7 +151,7 @@ export default class MusicCommand extends CommandBase {
 
     const optionName = args.shift();
 
-    const musicPlayer = this.musicPlayerManager.get(message.guild.id);
+    const musicPlayer = this.musicPlayerManager.get(message.guild);
 
     switch(optionName) {
       case 'playlist': {

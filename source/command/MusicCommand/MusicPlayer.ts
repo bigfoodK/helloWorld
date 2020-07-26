@@ -1,15 +1,16 @@
 import { MusicQueue } from './MusicQueue';
 import { MusicInfo, MusicQueueRepeat } from './types';
-import { VoiceConnection, VoiceChannel, StreamDispatcher } from 'discord.js';
+import { VoiceConnection, VoiceChannel, StreamDispatcher, Message, MessageEmbed, TextChannel, DMChannel, NewsChannel, Guild } from 'discord.js';
 import { join } from 'path';
 import config from '../../config';
 
 export default class MusicPlayer {
-  constructor() {
+  constructor(guild: Guild) {
     this.handleQueuePlayableChange = this.handleQueuePlayableChange.bind(this);
     this.addMusics = this.addMusics.bind(this);
     this.play = this.play.bind(this);
     this.stop = this.stop.bind(this);
+    this.guild = guild;
 
     this.queue.on('playableChange', this.handleQueuePlayableChange);
   }
@@ -17,6 +18,12 @@ export default class MusicPlayer {
   private queue: MusicQueue = new MusicQueue();
 
   private isPlaying: boolean = false;
+
+  private guild: Guild;
+
+  private lastMessageChannel?: TextChannel | DMChannel | NewsChannel;
+
+  private lastVoiceChannel?: VoiceChannel;
 
   private voiceConnection?: VoiceConnection;
 
@@ -42,47 +49,60 @@ export default class MusicPlayer {
   }
 
   private async joinChannel(voiceChannel: VoiceChannel) {
-    const connection = await voiceChannel.join();
-    this.voiceConnection = connection;
+    this.lastVoiceChannel = voiceChannel;
+    this.voiceConnection = await voiceChannel.join();
   }
 
-  private playMusicInfo(musicInfo?: MusicInfo) {
-    if (!this.isPlaying || !musicInfo || !this.voiceConnection) {
-      return;
+  private playNext() {
+    this.streamDispatcher?.destroy();
+    this.streamDispatcher = undefined;
+    !!this.queue.next() ? this.play() : this.stop();
+  }
+
+  public async play(message?: Message) {
+    const voiceChannel = message?.member?.voice?.channel || this.lastVoiceChannel;
+    const messageChannel = this.lastMessageChannel;
+    if (message) {
+      this.lastMessageChannel = message.channel;
     }
-    const filePath = join(config.musicStorageDirectoryPath, `${musicInfo.id}.mp3`);
-    const dispatcher = this.voiceConnection.play(filePath);
-    dispatcher.on('end', reason => this.playNext(reason))
-    this.streamDispatcher = dispatcher;
-  }
 
-  private playNext(reason: string) {
-    const musicInfo = this.queue.next();
-    this.playMusicInfo(musicInfo);
-  }
-
-  public async play(voiceChannel?: VoiceChannel) {
-    if (voiceChannel && (this.voiceConnection?.channel.id !== voiceChannel.id)) {
-      this.leaveChannel()
-      await this.joinChannel(voiceChannel);
+    if (voiceChannel) {
+      this.lastVoiceChannel = voiceChannel;
+      if (this.voiceConnection?.channel.id !== voiceChannel.id) {
+        this.leaveChannel();
+        await this.joinChannel(voiceChannel);
+      }
     }
 
     if (!this.voiceConnection) {
-      throw new Error('NO_CHANNEL_FOUND');
+      return await messageChannel?.send(new MessageEmbed()
+        .setColor('#ef5350')
+        .setTitle('No channel found')
+        .setDescription('Join to voice channel')
+      )
     }
 
     const musicInfo = this.queue.current();
 
     if (!musicInfo && this.queue.isEmpty()) {
-      throw new Error('QUEUE_IS_EMPTY');
-    }
-
-    if (musicInfo && !this.streamDispatcher) {
-      this.playMusicInfo(musicInfo);
+      return await messageChannel?.send(new MessageEmbed()
+        .setColor('#ef5350')
+        .setTitle('Queue is empty')
+        .setDescription('Add some music')
+      )
     }
 
     if (!this.isPlaying && this.streamDispatcher) {
       this.streamDispatcher.resume();
+      await this.printNowPlaying();
+    }
+
+    if (musicInfo && !this.streamDispatcher) {
+      const filePath = join(config.musicStorageDirectoryPath, `${musicInfo.id}.mp3`);
+      const dispatcher = this.voiceConnection.play(filePath);
+      dispatcher.on('finish', () => this.playNext());
+      this.streamDispatcher = dispatcher;
+      await this.printNowPlaying();
     }
 
     this.isPlaying = true;
@@ -98,7 +118,7 @@ export default class MusicPlayer {
 
   public stop() {
     if (this.streamDispatcher) {
-      this.streamDispatcher.end('stop');
+      this.streamDispatcher.destroy();
       this.streamDispatcher = undefined;
     }
     this.isPlaying = false;
@@ -109,7 +129,7 @@ export default class MusicPlayer {
   }
 
   public skip() {
-    this.playNext('skip');
+    this.playNext();
   }
 
   public leave() {
@@ -118,5 +138,20 @@ export default class MusicPlayer {
 
   public setRepeat(repeat: MusicQueueRepeat) {
     this.queue.setRepeat(repeat);
+  }
+
+  public async printNowPlaying() {
+    const musicInfo = this.queue.current();
+    if (!musicInfo) {
+      return false;
+    }
+    const adder = this.guild.member(musicInfo.adderId);
+    const embed = new MessageEmbed();
+    embed.setColor('#2196f3');
+    embed.setTitle('Now Playing');
+    embed.addField(`${musicInfo.title}`, `${musicInfo.url}
+${adder ? adder.toString() + ' added': ''} at ${new Date(musicInfo.addedTime).toLocaleString()}
+${musicInfo.playable ? 'ready to play' : 'downloading'}`)
+    await this.lastMessageChannel?.send(embed);
   }
 }
